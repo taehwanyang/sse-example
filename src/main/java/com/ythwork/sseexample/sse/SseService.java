@@ -36,7 +36,14 @@ public class SseService {
 
         emitter.onError(ex -> repository.remove(clientId));
 
-        sendToClient(clientId, emitter, "connect", "connected: " + clientId);
+        try {
+            emitter.send(SseEmitter.event()
+                    .name("connect")
+                    .data("connected: " + clientId));
+        } catch (IOException | IllegalStateException ex) {
+            repository.remove(clientId);
+            emitter.completeWithError(ex);
+        }
 
         return emitter;
     }
@@ -64,16 +71,5 @@ public class SseService {
 
     public int count() {
         return repository.count();
-    }
-
-    private void sendToClient(String clientId, SseEmitter emitter, String eventName, Object data) {
-        try {
-            emitter.send(SseEmitter.event()
-                    .name(eventName)
-                    .data(data));
-        } catch (IOException | IllegalStateException ex) {
-            repository.remove(clientId);
-            emitter.completeWithError(ex);
-        }
     }
 }
