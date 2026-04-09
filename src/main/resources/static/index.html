@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Redis PubSub Test</title>
+</head>
+<body>
+<h1>SSE + Redis Pub/Sub Test</h1>
+<div id="messages"></div>
+
+<script>
+    const messages = document.getElementById("messages");
+
+    const eventSource = new EventSource("/subscribe");
+
+    eventSource.addEventListener("connect", (event) => {
+        const p = document.createElement("p");
+        p.textContent = "[connect] " + event.data;
+        messages.appendChild(p);
+    });
+
+    eventSource.addEventListener("notification", (event) => {
+        const data = JSON.parse(event.data);
+
+        const p = document.createElement("p");
+        p.textContent = `[notification] sender=${data.senderInstanceId}, message=${data.message}, time=${data.timestamp}`;
+        messages.appendChild(p);
+    });
+
+    eventSource.onerror = (error) => {
+        const p = document.createElement("p");
+        p.textContent = "[error] connection issue";
+        messages.appendChild(p);
+        console.error(error);
+    };
+</script>
+</body>
+</html>
