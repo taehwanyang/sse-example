@@ -58,13 +58,15 @@ curl -X POST http://localhost:8080/notifications/broadcast \
 
 ### 구독(SSE 연결)
 
-  - 터미널을 3개 연다.
-  - 두개의 터미널은 curl로 SSE 연결
-  - 한개의 터미널에서 이벤트 발생
-
+  - 터미널을 2개 연다.
+  - 두개의 터미널에서 curl로 SSE 연결
 ```shell
 curl -N http://localhost:8080/subscribe
 ```
+
+### 다른 터미널에서 이벤트 발생
+  - 터미널을 연다.
+  - 터미널에서 이벤트 발생
 
 ```shell
 curl -X POST http://localhost:8080/notifications/broadcast \
